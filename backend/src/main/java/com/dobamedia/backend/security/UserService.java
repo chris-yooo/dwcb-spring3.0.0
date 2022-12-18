@@ -11,13 +11,13 @@ import org.springframework.web.server.ResponseStatusException;
 @RequiredArgsConstructor
 public class UserService {
 
-    private final Repository repository;
+    private final UserRepository userRepository;
     private final Utils utils;
 
     String notFound = "User not found";
 
     public User addUser(@NotNull DtoNewUser dtoNewUser) throws ResponseStatusException {
-        if (repository.findByUsername(dtoNewUser.username()).isPresent()) {
+        if (userRepository.findByUsername(dtoNewUser.username()).isPresent()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, notFound);
         }
         String passwordBcrypt = utils.addPasswordBcrypt(dtoNewUser.password());
@@ -28,21 +28,21 @@ public class UserService {
                 "USER",
                 dtoNewUser.email()
         );
-        repository.save(user);
+        userRepository.save(user);
         return user;
     }
 
     User getUserDetails(String username) throws ResponseStatusException {
-        return repository.findByUsername(username)
+        return userRepository.findByUsername(username)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, notFound));
     }
 
     public void deleteUser(String id) {
-        repository.deleteById(id);
+        userRepository.deleteById(id);
     }
 
     public User findByUsername(String usernameFromSession) {
-        return repository.findByUsername(usernameFromSession)
+        return userRepository.findByUsername(usernameFromSession)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, notFound));
     }
 }
