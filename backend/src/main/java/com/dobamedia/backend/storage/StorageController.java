@@ -7,7 +7,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/storage")
+@RequestMapping("/api/storages")
 @RequiredArgsConstructor
 public class StorageController {
 

@@ -6,8 +6,6 @@ public record DtoNewStorage(
         @NotBlank
         String boxname,
         @NotBlank
-        String name,
-        @NotBlank
         String username,
         @NotBlank
         String password,

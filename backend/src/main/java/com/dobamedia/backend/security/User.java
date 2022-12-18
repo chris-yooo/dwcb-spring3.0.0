@@ -7,7 +7,4 @@ public record User(
         String role,
         String email
 ) {
-    public String getRole() {
-        return role;
-    }
 }

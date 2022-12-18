@@ -28,8 +28,10 @@ public class UserSecurityConfig {
                 .authorizeHttpRequests()
                 .requestMatchers(HttpMethod.GET, "/", "/static/**", "/index.html", "/api/users/me").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
-                .requestMatchers(HttpMethod.GET,"/api/users/login", "/api/users/logout", "/api/users/{username}").hasRole("USER")
-                .requestMatchers(HttpMethod.DELETE,"/api/users/{id}").hasRole("USER")
+                .requestMatchers(HttpMethod.GET,"/api/users/login", "/api/users/logout", "/api/costumers", "/api/storages").hasRole("USER")
+                .requestMatchers(HttpMethod.POST, "/api/costumers", "/api/storages").hasRole("USER")
+                .requestMatchers(HttpMethod.PUT, "/api/costumers/{id}", "/api/storages/{id}").hasRole("USER")
+                .requestMatchers(HttpMethod.DELETE,"/api/users/{id}", "/api/storages/{id}").hasRole("USER")
                 .anyRequest().denyAll()
                 .and().build();
     }
@@ -53,7 +55,7 @@ public class UserSecurityConfig {
                 return org.springframework.security.core.userdetails.User.builder()
                         .username(user.username())
                         .password(user.passwordBcrypt())
-                        .roles(user.getRole())
+                        .roles(user.role())
                         .build();
             }
 
