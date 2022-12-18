@@ -1,7 +1,6 @@
 package com.dobamedia.backend.costumers;
 
-public record Costumer(
-        String id,
+public record DtoUpdateCostumer(
         String wooId,
         String name,
         String username,

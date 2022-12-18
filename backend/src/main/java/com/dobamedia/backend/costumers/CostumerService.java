@@ -16,7 +16,10 @@ public class CostumerService {
     public Costumer addCostumer(DtoNewCostumer dtoNewCostumer) {
         Costumer costumer = new Costumer(
                 utils.addUUIDasString(),
+                dtoNewCostumer.wooId(),
                 dtoNewCostumer.name(),
+                dtoNewCostumer.username(),
+                dtoNewCostumer.email(),
                 dtoNewCostumer.paket()
         );
         costumerRepository.save(costumer);
@@ -37,15 +40,17 @@ public class CostumerService {
                 .orElseThrow(() -> new RuntimeException("Costumer not found"));
     }
 
-    public Costumer updateCostumer(String id, DtoNewCostumer dtoNewCostumer) {
+    public Costumer updateCostumer(String id, DtoUpdateCostumer dtoUpdateCostumer) {
         Costumer costumer = getCostumerById(id);
         costumer = new Costumer(
                 costumer.id(),
-                dtoNewCostumer.name(),
-                dtoNewCostumer.paket()
+                dtoUpdateCostumer.wooId(),
+                dtoUpdateCostumer.name(),
+                dtoUpdateCostumer.username(),
+                dtoUpdateCostumer.email(),
+                dtoUpdateCostumer.paket()
         );
-        costumerRepository.save(costumer);
-        return costumer;
+        return costumerRepository.save(costumer);
     }
 
     public void deleteCostumer(String id) {

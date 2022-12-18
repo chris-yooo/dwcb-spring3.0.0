@@ -1,6 +1,6 @@
 package com.dobamedia.backend.utils;
 
-import com.dobamedia.backend.security.SecurityConfig;
+import com.dobamedia.backend.security.UserSecurityConfig;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -15,7 +15,7 @@ public class Utils {
     }
 
     public String addPasswordBcrypt(String password) {
-        return SecurityConfig.passwordEncoder.encode(password);
+        return UserSecurityConfig.passwordEncoder.encode(password);
     }
 
     public String addUUIDasString8Chars() {

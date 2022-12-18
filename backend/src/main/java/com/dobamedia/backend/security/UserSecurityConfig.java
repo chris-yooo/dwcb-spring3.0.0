@@ -14,7 +14,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @EnableWebSecurity
 @RequiredArgsConstructor
-public class SecurityConfig {
+public class UserSecurityConfig {
 
     public static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -28,7 +28,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests()
                 .requestMatchers(HttpMethod.GET, "/", "/static/**", "/index.html", "/api/users/me").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
-                .requestMatchers("/api/users/login", "/api/users/logout", "/api/users/{username}").hasRole("USER")
+                .requestMatchers(HttpMethod.GET,"/api/users/login", "/api/users/logout", "/api/users/{username}").hasRole("USER")
+                .requestMatchers(HttpMethod.DELETE,"/api/users/{id}").hasRole("USER")
                 .anyRequest().denyAll()
                 .and().build();
     }

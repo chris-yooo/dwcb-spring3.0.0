@@ -36,8 +36,8 @@ public class CostumerController {
     }
 
     @PutMapping("/{id}")
-    public Costumer updateCostumer(@PathVariable String id, @Valid @RequestBody DtoNewCostumer dtoNewCostumer) {
-        return costumerService.updateCostumer(id, dtoNewCostumer);
+    public Costumer updateCostumer(@PathVariable String id, @Valid @RequestBody DtoUpdateCostumer dtoUpdateCostumer) {
+        return costumerService.updateCostumer(id, dtoUpdateCostumer);
     }
 
     @DeleteMapping("/{id}")
