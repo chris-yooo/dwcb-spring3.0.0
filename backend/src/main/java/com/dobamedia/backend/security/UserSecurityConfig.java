@@ -2,6 +2,7 @@ package com.dobamedia.backend.security;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -12,6 +13,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
+
+@Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class UserSecurityConfig {
@@ -21,19 +24,19 @@ public class UserSecurityConfig {
     private final UserService userService;
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        return http
+    public SecurityFilterChain configure(HttpSecurity http) throws Exception {
+        http
                 .csrf().disable()
-                .httpBasic().and()
-                .authorizeHttpRequests()
-                .requestMatchers(HttpMethod.GET, "/", "/static/**", "/index.html", "/api/users/me").permitAll()
-                .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
-                .requestMatchers(HttpMethod.GET,"/api/users/login", "/api/users/logout", "/api/costumers", "/api/storages").hasRole("USER")
-                .requestMatchers(HttpMethod.POST, "/api/costumers", "/api/storages").hasRole("USER")
-                .requestMatchers(HttpMethod.PUT, "/api/costumers/{id}", "/api/storages/{id}").hasRole("USER")
-                .requestMatchers(HttpMethod.DELETE,"/api/users/{id}", "/api/storages/{id}").hasRole("USER")
-                .anyRequest().denyAll()
-                .and().build();
+                .authorizeHttpRequests(requests -> requests
+                        .requestMatchers(HttpMethod.GET, "/", "/static/**", "/index.html", "/api/users/me").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/users/login", "/api/users/{username}", "/api/users/logout", "/api/costumers", "/api/storages").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/costumers", "/api/storages").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/costumers/{id}", "/api/storages/{id}").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/users/{id}", "/api/storages/{id}", "/api/costumers/{id}").authenticated()
+                        .anyRequest().denyAll())
+                .httpBasic();
+        return http.build();
     }
 
     @Bean
@@ -53,9 +56,9 @@ public class UserSecurityConfig {
                     throw new UsernameNotFoundException("Username not found");
                 }
                 return org.springframework.security.core.userdetails.User.builder()
-                        .username(user.username())
+                        .username(username)
                         .password(user.passwordBcrypt())
-                        .roles(user.role())
+                        .roles("BASIC")
                         .build();
             }
 
