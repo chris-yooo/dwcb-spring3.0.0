@@ -13,47 +13,33 @@ type Props = {
 
 export default function Profile(props: Props) {
 
+    const [id, setId] = useState(props.userDetails.id);
     const [username, setUsername] = useState(props.userDetails.username);
-    const [firstName, setFirstName] = useState(props.userDetails.firstName);
-    const [lastName, setLastName] = useState(props.userDetails.lastName);
+    const [roles, setRoles] = useState(props.userDetails.roles);
     const [email, setEmail] = useState(props.userDetails.email);
     const [messageStatus, setMessageStatus] = useState("");
-    const [pictureMessageStatus, setPictureMessageStatus] = useState("");
     const [usernameMessageStatus, setUsernameMessageStatus] = useState("");
     const [error, setError] = useState("");
     const [usernameError, setUsernameError] = useState("");
     const [doEdit, setDoEdit] = useState(false);
     const [doEditUsername, setDoEditUsername] = useState(false);
-    const [doProfilePicture, setDoProfilePicture] = useState(false);
     const [doDelete, setDoDelete] = useState(false);
     const [errorMail, setErrorMail] = useState("");
-    const [file, setFile] = useState<FileList | null>(null);
-    const [fileName, setFileName] = useState(props.userDetails.profilePicture.fileName);
-    const [fileUrl, setFileUrl] = useState(props.userDetails.profilePicture.fileUrl);
-    const id = props.userDetails.id;
-    let fileData = new FormData();
-    fileData.append("file", file ? file[0] : new File([""], "placeholder.jpg"));
+    const userId = props.userDetails.id;
 
     useEffect(() => {
+        setId(props.userDetails.id);
         setUsername(props.userDetails.username);
-        setFirstName(props.userDetails.firstName);
-        setLastName(props.userDetails.lastName);
+        setRoles(props.userDetails.roles);
         setEmail(props.userDetails.email);
-        setFileName(props.userDetails.profilePicture.fileName);
-        setFileUrl(props.userDetails.profilePicture.fileUrl);
     }, [props.userDetails]);
 
-    const updateUserDetails = (fileName: string, fileUrl: string) => {
-        const profilePicture = {
-            fileName: fileName,
-            fileUrl: fileUrl
-        }
-        axios.put("/api/chrat-users/" + id, {
+    const updateUserDetails = () => {
+        axios.put("/api/users/" + userId, {
             id,
-            firstName,
-            lastName,
+            username,
+            roles,
             email,
-            profilePicture
         })
             .then((response) => response.status)
             .then((status) => {
@@ -72,42 +58,8 @@ export default function Profile(props: Props) {
             })
     }
 
-    const uploadProfilePicture = () => {
-        axios.post("/api/pictures/upload", fileData, {
-            headers: {
-                "Content-Type": "multipart/form-data"
-            }
-        })
-            .then((response) => response)
-            .then((response) => {
-                if (response.request.response) {
-                    const profilePictureUrl = "/api/pictures/files/";
-                    let fileNameNew = response.request.response;
-                    let fileUrlNew = profilePictureUrl.concat(fileNameNew);
-                    setFileName(fileNameNew);
-                    setFileUrl(fileUrlNew)
-                    updateUserDetails(fileNameNew, fileUrlNew);
-                }
-                if (response.status === 200) {
-                    setPictureMessageStatus("Bild wurde erfolgreich hochgeladen");
-                    (setTimeout(() => {
-                        setPictureMessageStatus("");
-                        setDoProfilePicture(false);
-                        props.getUserDetails();
-                    }, 2000));
-                }
-            })
-            .catch((error) => {
-                if (error.response.status === 417) {
-                    setError("Fehler beim hochladen, bitte versuche es erneut");
-                    (setTimeout(() => setError(""), 5000));
-                }
-                console.log("Error =>" + error)
-            })
-    }
-
     function deleteUser() {
-        axios.delete("/api/chrat-users/" + id)
+        axios.delete("/api/users/" + id)
             .then((response) => response.status)
             .then((status) => {
                 if (status === 204) {
@@ -140,13 +92,13 @@ export default function Profile(props: Props) {
         } else {
             setErrorMail("");
         }
-        updateUserDetails(fileName, fileUrl);
+        updateUserDetails();
     }
 
     const usernameChange = () => {
-        axios.put("/api/chrat-users/username/" + id, {
+        axios.put("/api/users/username/" + id, {
             id,
-            username
+            username,
         })
             .then((response) => response.status)
             .then((status) => {
@@ -166,17 +118,12 @@ export default function Profile(props: Props) {
                     (setTimeout(() => setUsernameError(""), 5000));
                 }
                 if (error.response.status === 406) {
-                    setUsernameError("Username ist schon vergben");
+                    setUsernameError("Username ist schon vergeben");
                     setUsername(props.userDetails.username);
                     (setTimeout(() => setUsernameError(""), 5000));
                 }
                 console.log("Error =>" + error)
             })
-    }
-
-    function handleUploadProfilePicture(event: any) {
-        event.preventDefault()
-        uploadProfilePicture();
     }
 
     const usernameRegEx = (username: string) => {
@@ -207,20 +154,6 @@ export default function Profile(props: Props) {
                 </StyledModalDiv2>
             </StyledModalDiv1>
         )}
-        {doProfilePicture && (
-            <StyledModalDiv1>
-                <StyledModalDiv2>
-                    <StyledP>Bitte Profilbild auswählen</StyledP>
-                    <StyledInput type={"file"} accept={"image/*"} onChange={(e) => setFile(e.target.files)}/>
-                    <StyledDeleteDiv3>
-                        <StyledButton onClick={() => setDoProfilePicture(false)}>Abbrechen</StyledButton>
-                        <StyledButton onClick={handleUploadProfilePicture}>Hochladen</StyledButton>
-                    </StyledDeleteDiv3>
-                    {messageStatus && <StyledMessage>{pictureMessageStatus}</StyledMessage>}
-                    {error && <StyledErrorMessage>{error}</StyledErrorMessage>}
-                </StyledModalDiv2>
-            </StyledModalDiv1>
-        )}
         {doEditUsername && (
             <StyledModalDiv1>
                 <StyledModalDiv2>
@@ -242,22 +175,11 @@ export default function Profile(props: Props) {
             </StyledModalDiv1>
         )}
         <StyledSection>
-            <StyledDiv4>
-                {doEdit ?
-                    <StyledEditPictureButton type="button" onClick={() => {
-                        setDoProfilePicture(true);
-                        setDoEdit(false)
-                    }}>
-                        <StyledImg src={fileUrl} alt={"Profil Bild"}/>
-                        <StyledDiv5>
-                            <Icon icon="fluent:send-copy-24-filled" color="var(--color-white)" width="50"/>
-                        </StyledDiv5>
-                    </StyledEditPictureButton>
-                    :
-                    <StyledImg src={fileUrl} alt={"Profil Bild"}/>}
-            </StyledDiv4>
             <form onSubmit={handleUpdateUserDetails}>
                 <StyledDiv1>
+                    <StyledLabel htmlFor="id">Deine ID lautet:</StyledLabel>
+                    <p id="id">{id}</p>
+
                     <StyledLabel htmlFor="username">Username:</StyledLabel>
                     <StyledInput type="text"
                                  id="username"
@@ -265,21 +187,8 @@ export default function Profile(props: Props) {
                                  disabled={!doEditUsername}
                                  required/>
 
-                    <StyledLabel htmlFor="firstname">Vorname:</StyledLabel>
-                    <StyledInput type="text"
-                                 id="firstname"
-                                 value={firstName}
-                                 onChange={(e) => setFirstName(e.target.value)}
-                                 disabled={!doEdit}
-                                 required/>
-
-                    <StyledLabel htmlFor={"lastname"}>Nachname:</StyledLabel>
-                    <StyledInput type="text"
-                                 id="lastname"
-                                 value={lastName}
-                                 onChange={(e) => setLastName(e.target.value)}
-                                 disabled={!doEdit}
-                                 required/>
+                    <StyledLabel htmlFor="roles">Deine ID lautet:</StyledLabel>
+                    <p id="roles">{id}</p>
 
                     <StyledLabel htmlFor={"email"}>E-Mail:</StyledLabel>
                     <StyledInput type="text"
@@ -566,39 +475,4 @@ const StyledDeleteDiv3 = styled.div`
   flex-wrap: wrap;
   margin: 10px 0 0 0;
   padding: 10px;
-`
-
-const StyledDiv4 = styled.div`
-  position: relative;
-  margin: 10px 0 0 0;
-  padding: 10px;
-`
-
-const StyledDiv5 = styled.div`
-  position: absolute;
-  top: 48px;
-  left: 54px;
-`
-
-const StyledEditPictureButton = styled.button`
-  display: flex;
-  transition-duration: 0.4s;
-  border: none;
-  background-color: transparent;
-  border-radius: 50%;
-
-  &:hover {
-    background-color: var(--color-button-hover);
-  }
-
-  &:active {
-    background-color: var(--color-button-active);
-  }
-`
-
-const StyledImg = styled.img`
-  width: 125px;
-  height: 125px;
-  object-fit: cover;
-  border-radius: 50%;
 `
