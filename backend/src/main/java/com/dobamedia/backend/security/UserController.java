@@ -48,9 +48,21 @@ public class UserController {
                 .getAuthentication()
                 .getName();
         if (!usernameFromSession.equals(username) || !usernameFromSession.equals(dtoUpdateUser.username())) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "The username you want to update not equals to your session username");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "The profile username you want to update not equals to your session username!");
         }
         return userService.updateUserProfile(dtoUpdateUser);
+    }
+
+    @PutMapping("/username/{username}")
+    public User profileUsernameUpdate(@PathVariable String username, @RequestBody DtoUpdateUsername dtoUpdateUsername) {
+        String usernameFromSession = SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getName();
+        if (!usernameFromSession.equals(username) || !usernameFromSession.equals(dtoUpdateUsername.username())) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "The username you want to update not equals to your session username!");
+        }
+        return userService.updateUserName(dtoUpdateUsername);
     }
 
     @DeleteMapping("/{id}")

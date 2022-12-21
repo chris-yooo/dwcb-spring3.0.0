@@ -50,6 +50,22 @@ public class UserService {
         return userRepository.save(updatedUser);
     }
 
+    public User updateUserName(DtoUpdateUsername dtoUpdateUsername) {
+        if (userRepository.findByUsername(dtoUpdateUsername.username()).isPresent()) {
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Username already exists");
+        }
+        User user = userRepository.findById(dtoUpdateUsername.id())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, notFound));
+        User updatedUsername = new User(
+                user.id(),
+                dtoUpdateUsername.username(),
+                user.passwordBcrypt(),
+                user.role(),
+                user.email()
+        );
+        return userRepository.save(updatedUsername);
+    }
+
     public void deleteUser(String id) {
         userRepository.deleteById(id);
     }
