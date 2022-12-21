@@ -37,6 +37,19 @@ public class UserService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, notFound));
     }
 
+    public User updateUserProfile(DtoUpdateUser dtoUpdateUser) {
+        User user = userRepository.findById(dtoUpdateUser.id())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, notFound));
+        User updatedUser = new User(
+                user.id(),
+                user.username(),
+                user.passwordBcrypt(),
+                user.role(),
+                dtoUpdateUser.email()
+        );
+        return userRepository.save(updatedUser);
+    }
+
     public void deleteUser(String id) {
         userRepository.deleteById(id);
     }

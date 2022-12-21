@@ -15,7 +15,6 @@ export default function Profile(props: Props) {
 
     const [id, setId] = useState(props.userDetails.id);
     const [username, setUsername] = useState(props.userDetails.username);
-    const [roles, setRoles] = useState(props.userDetails.roles);
     const [email, setEmail] = useState(props.userDetails.email);
     const [messageStatus, setMessageStatus] = useState("");
     const [usernameMessageStatus, setUsernameMessageStatus] = useState("");
@@ -25,20 +24,17 @@ export default function Profile(props: Props) {
     const [doEditUsername, setDoEditUsername] = useState(false);
     const [doDelete, setDoDelete] = useState(false);
     const [errorMail, setErrorMail] = useState("");
-    const userId = props.userDetails.id;
 
     useEffect(() => {
         setId(props.userDetails.id);
         setUsername(props.userDetails.username);
-        setRoles(props.userDetails.roles);
         setEmail(props.userDetails.email);
     }, [props.userDetails]);
 
     const updateUserDetails = () => {
-        axios.put("/api/users/" + userId, {
+        axios.put("/api/users/" + username, {
             id,
             username,
-            roles,
             email,
         })
             .then((response) => response.status)
