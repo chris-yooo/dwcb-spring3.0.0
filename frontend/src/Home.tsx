@@ -1,17 +1,18 @@
 import axios from "axios";
 import {Route, Routes} from "react-router";
 import {useNavigate} from "react-router-dom";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import styled from "styled-components";
 import {UserModel} from "./UserModel";
 import CostumerRegister from "./CostumerRegister";
+import Profile from "./Profile";
 
 type Props = {
     user: string
     fetchUsername: () => void
 }
 
-export default function LoggedInPage(props: Props) {
+export default function Home(props: Props) {
 
     const [userDetails, setUserDetails] = useState<UserModel>({
         id: "",
@@ -20,7 +21,7 @@ export default function LoggedInPage(props: Props) {
         roles: "BASIC",
         email: "",
     });
-    const [userPictureMenu, setUserPictureMenu] = useState<boolean>(false);
+    const [userMenu, setUserMenu] = useState<boolean>(false);
     const nlink = useNavigate();
 
     const getUserDetails = () => {
@@ -40,27 +41,26 @@ export default function LoggedInPage(props: Props) {
 
     return <>
         <StyledHeader>
-            <StyledH1>chRat-Reloaded</StyledH1>
-            <StyledH2>der Messenger</StyledH2>
+            <StyledH1>DieWerkstattCloud-Backend</StyledH1>
         </StyledHeader>
         <StyledNav>
             <StyledButton>
-               ASDASD
+                ASDASD
             </StyledButton>
-            {userPictureMenu &&
+            {userMenu &&
                 <StyledPictureMenu>
                     <StyledButton2 onClick={() => {
                         nlink("/profile");
-                        setUserPictureMenu(false);
+                        setUserMenu(false);
                         props.fetchUsername()
-                    }}>Profile</StyledButton2>
+                    }}>User Profil</StyledButton2>
                     <StyledButton2 onClick={() => {
-                        nlink("/");
-                        setUserPictureMenu(false)
-                    }}>Mainchat</StyledButton2>
+                        nlink("/addcostumer");
+                        setUserMenu(false)
+                    }}>Kunde anlegen</StyledButton2>
                     <StyledLogoutButton onClick={() => {
                         logout();
-                        setUserPictureMenu(false)
+                        setUserMenu(false)
                     }}>Logout</StyledLogoutButton>
                 </StyledPictureMenu>
             }
@@ -68,11 +68,14 @@ export default function LoggedInPage(props: Props) {
         <StyledMain>
             <Routes>
                 <Route path="/addcostumer"
-                       element={<CostumerRegister />}/>
+                       element={<CostumerRegister/>}/>
+                <Route path="/profile"
+                       element={<Profile user={props.user} userDetails={userDetails} logout={logout}
+                                         getUserDetails={getUserDetails}/>}/>
             </Routes>
         </StyledMain>
         <StyledFooter>
-            <p>© 2022 chRat-Reloaded</p>
+            <p>© 2022 DWCB</p>
         </StyledFooter>
     </>
 }
@@ -100,16 +103,6 @@ const StyledH1 = styled.h1`
   font-style: normal;
   font-weight: 400;
   line-height: 48px;
-  color: var(--color-white);
-  text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-`
-
-const StyledH2 = styled.h2`
-  margin: 10px 0 20px 0;
-  padding: 0;
-  font-size: 1rem;
-  font-family: 'Inter', sans-serif;
-  font-weight: 400;
   color: var(--color-white);
   text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 `
@@ -158,16 +151,6 @@ const StyledNav = styled.nav`
     top: 1vh;
     left: 1vw;
   }
-`
-
-const StyledImg = styled.img`
-  width: 75px;
-  height: 75px;
-  object-fit: cover;
-  border-radius: 50%;
-  @media (max-width: 768px) {
-    width: 50px;
-    height: 50px;
 `
 
 const StyledButton2 = styled.button`

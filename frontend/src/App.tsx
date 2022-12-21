@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import axios from "axios";
-import LoggedInPage from "./LoggedInPage";
+import Home from "./Home";
 import styled from "styled-components";
 
 export default function App() {
@@ -72,10 +72,13 @@ export default function App() {
         {error && <StyledErrorMessage>{error}</StyledErrorMessage>}
         {messageStatus && <StyledMessage>{messageStatus}</StyledMessage>}
       </StyledMain>
+      <StyledFooter>
+        <p>© 2022 DWCB</p>
+      </StyledFooter>
     </>
   }
 
-  return <LoggedInPage user={user} fetchUsername={fetchUser}></LoggedInPage>
+  return <Home user={user} fetchUsername={fetchUser}></Home>
 }
 
 const StyledHeader = styled.header`
@@ -186,4 +189,15 @@ const StyledErrorMessage = styled.p`
     margin: 10px 0 0 0;
     padding: 0;
   }
+`
+
+const StyledFooter = styled.footer`
+  display: flex;
+  justify-content: center;
+  padding: 0;
+  font-size: 0.8rem;
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  color: var(--color-white);
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 `
