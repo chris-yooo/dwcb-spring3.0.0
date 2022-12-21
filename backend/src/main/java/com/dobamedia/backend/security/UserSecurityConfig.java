@@ -31,7 +31,7 @@ public class UserSecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/users/login", "/api/users/{username}", "/api/users/logout", "/api/costumers", "/api/storages").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/costumers", "/api/storages").authenticated()
-                        .requestMatchers(HttpMethod.PUT, "/api/costumers/{id}", "/api/storages/{id}").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/costumers/{id}", "/api/storages/{id}", "/api/users/{username}", "/api/username/{username}").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/api/users/{id}", "/api/storages/{id}", "/api/costumers/{id}").authenticated()
                         .anyRequest().denyAll())
                 .httpBasic();
