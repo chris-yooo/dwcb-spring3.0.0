@@ -144,15 +144,6 @@ const StyledDiv1 = styled.div`
   padding: 10px;
 `
 
-const StyledDiv2 = styled.div`
-  display: flex;
-  justify-content: center;
-  align-self: center;
-  padding: 10px 20px;
-  margin-bottom: 23px;
-  font-size: 1.1rem;
-`;
-
 const StyledDiv3 = styled.div`
   display: flex;
   align-self: center;
