@@ -92,7 +92,7 @@ export default function Profile(props: Props) {
     }
 
     const usernameChange = () => {
-        axios.put("/api/users/username/" + id, {
+        axios.put("/api/users/username/" + username, {
             id,
             username,
         })
@@ -109,14 +109,19 @@ export default function Profile(props: Props) {
             })
             .catch((error) => {
                 if (error.response.status === 400) {
-                    setUsernameError("Fehler beim Ändern");
+                    setUsernameError("Fehler beim ändern");
                     setUsername(props.userDetails.username);
-                    (setTimeout(() => setUsernameError(""), 5000));
+                    (setTimeout(() => setUsernameError(""), 2500));
+                }
+                if (error.response.status === 404 || error.response.status === 401) {
+                    setUsernameError("Fehler beim ändern");
+                    setUsername(props.userDetails.username);
+                    (setTimeout(() => setUsernameError(""), 2500));
                 }
                 if (error.response.status === 406) {
                     setUsernameError("Username ist schon vergeben");
                     setUsername(props.userDetails.username);
-                    (setTimeout(() => setUsernameError(""), 5000));
+                    (setTimeout(() => setUsernameError(""), 2500));
                 }
                 console.log("Error =>" + error)
             })
